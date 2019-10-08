@@ -147,6 +147,4 @@ def match_roommates(preferences):
 
 preferences = [[2, 3, 1, 5, 4], [5, 4, 3, 0, 2], [1, 3, 4, 0, 5], [4, 1, 2, 5, 0], [2, 0, 1, 3, 5], [4, 0, 2, 3, 1]]
 
-first, last, preferences = stable_roommates_phase_1(preferences)
-
-print(clean_preferences(first, last, preferences))
+print(match_roommates(preferences))
