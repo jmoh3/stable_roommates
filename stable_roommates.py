@@ -7,13 +7,11 @@ def get_ranking_matrix(preference):
     
     return rank
 
-def stable_roommates_phase_1(preference):
+def stable_roommates_phase_1(preference, rank):
     proposal = [None for x in range(len(preference))]
     first = [0 for x in range(len(preference))]
     last = [len(x) for x in preference]
     to_process = [x for x in range(len(preference))]
-    
-    rank = get_ranking_matrix(preference)
     
     while len(to_process) > 0:
         i = to_process[0]
@@ -127,6 +125,25 @@ def stable_roommates_phase_2(first, last, preferences, rank):
         
         # eliminate rotation
         eliminate_rotation(p, q, first, last, preferences, rank)
+
+def match_roommates(preferences):
+    rank = get_ranking_matrix(preferences)
+    first, last, preferences = stable_roommates_phase_1(preferences, rank)
+    stable_roommates_phase_2(first, last, preferences, rank)
+    clean_preferences(first, last, preferences)
+    
+    matches = []
+    length = len(preferences)
+    visited = set()
+    i = 0
+    
+    for i in range(len(preferences)):
+        if not i in visited:
+            pair = (i, preferences[i][last[i]])
+            visited.add(last[i])
+            matches.append(pair)
+    
+    return matches
 
 preferences = [[2, 3, 1, 5, 4], [5, 4, 3, 0, 2], [1, 3, 4, 0, 5], [4, 1, 2, 5, 0], [2, 0, 1, 3, 5], [4, 0, 2, 3, 1]]
 
