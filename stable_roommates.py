@@ -74,6 +74,30 @@ def clean_preferences(first, last, preferences):
 
     return preferences
 
+def find_second_favorite(first_idx, last_idx, pref):
+    count = 0
+    for j in range(first_idx, last_idx):
+        if not pref[j] == None:
+            count += 1
+        if count == 2:
+            return pref[j]
+    return None
+
+def find_rotation(i, p, q, first, last, preferences):
+    second_favorite = find_second_favorite(first[p[i]], last[p[i]], preferences[p[i]])
+    next_p = preferences[second_favorite][last[second_favorite]]
+    
+    if next_p in p:
+        # rotation found!
+        j = p.index(next_p)
+        q[j] = second_favorite
+                
+        return p[j:], q[j:]
+
+    q.append(second_favorite)
+    p.append(next_p)
+    return find_rotation(i+1, p, q, first, last,  preferences)
+
 preferences = [[2, 3, 1, 5, 4], [5, 4, 3, 0, 2], [1, 3, 4, 0, 5], [4, 1, 2, 5, 0], [2, 0, 1, 3, 5], [4, 0, 2, 3, 1]]
 
 first, last, preferences = stable_roommates_phase_1(preferences)
