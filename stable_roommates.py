@@ -98,6 +98,18 @@ def find_rotation(i, p, q, first, last, preferences):
     p.append(next_p)
     return find_rotation(i+1, p, q, first, last,  preferences)
 
+def eliminate_rotation(p, q, first, last, preferences, rank):
+    for i in range(len(p)):
+        # q_i rejects p_i so that p_i proposes to q_i+1
+        preferences[p[i]][rank[p[i]][q[i]]] = None
+        
+        # all successors of p_i-1 are removed from q_i's list, and q_i is removed from their lists
+        for j in range(rank[q[i]][p[i-1]]+1, last[q[i]]):
+            reject = preferences[q[i]][j]
+            preferences[reject][rank[reject][q[i]]] = None
+            
+        last[q[i]] = rank[q[i]][p[i-1]]
+
 preferences = [[2, 3, 1, 5, 4], [5, 4, 3, 0, 2], [1, 3, 4, 0, 5], [4, 1, 2, 5, 0], [2, 0, 1, 3, 5], [4, 0, 2, 3, 1]]
 
 first, last, preferences = stable_roommates_phase_1(preferences)
