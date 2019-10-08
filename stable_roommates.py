@@ -74,17 +74,19 @@ def clean_preferences(first, last, preferences):
 
     return preferences
 
-def find_second_favorite(first_idx, last_idx, pref):
+def find_second_favorite(i, first, last, pref):
     count = 0
-    for j in range(first_idx, last_idx):
+    for j in range(first[i], last[i]+1):
         if not pref[j] == None:
             count += 1
+        elif count == 0:
+            first[i] += 1
         if count == 2:
             return pref[j]
     return None
 
 def find_rotation(i, p, q, first, last, preferences):
-    second_favorite = find_second_favorite(first[p[i]], last[p[i]], preferences[p[i]])
+    second_favorite = find_second_favorite(p[i], first, last, preferences[p[i]])
     next_p = preferences[second_favorite][last[second_favorite]]
     
     if next_p in p:
@@ -105,10 +107,26 @@ def eliminate_rotation(p, q, first, last, preferences, rank):
         
         # all successors of p_i-1 are removed from q_i's list, and q_i is removed from their lists
         for j in range(rank[q[i]][p[i-1]]+1, last[q[i]]):
-            reject = preferences[q[i]][j]
+            reject = rank[q[i]].index(j) #preferences[q[i]][j]
             preferences[reject][rank[reject][q[i]]] = None
             
         last[q[i]] = rank[q[i]][p[i-1]]
+
+def stable_roommates_phase_2(first, last, preferences, rank):
+    while True:
+        p, q = None, None
+        # find first p_0 to get a rotation from
+        # preference list of p_0 must contain at least 2 elements
+        for i in range(len(preferences)):
+            if last[i] - first[i] > 0 and find_second_favorite(i, first, last, preferences[i]) != None:
+                p, q = find_rotation(0, [i], [None], first, last, preferences)
+                break
+        
+        if not p and not q:
+            return preferences
+        
+        # eliminate rotation
+        eliminate_rotation(p, q, first, last, preferences, rank)
 
 preferences = [[2, 3, 1, 5, 4], [5, 4, 3, 0, 2], [1, 3, 4, 0, 5], [4, 1, 2, 5, 0], [2, 0, 1, 3, 5], [4, 0, 2, 3, 1]]
 
